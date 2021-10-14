@@ -1,0 +1,75 @@
+import random
+
+def player_choice():
+    if even_counter > odd_counter:
+        return "even"
+    else:
+        return "odd"
+
+def deal_card():
+    probability = odd_counter / deck_size
+    return "odd" if random.random() < probability else "even"
+
+def main():
+    global point_counter
+    global deck_size
+    global odd_counter
+    global even_counter
+
+    even_counter = 26
+    odd_counter = 26
+    deck_size = 52
+    point_counter = 0
+
+    exit = False
+    while exit == False:
+        card_dealt = deal_card()
+        decision = player_choice()
+        if card_dealt == "odd":
+            odd_counter -= 1
+        else:
+            even_counter -= 1
+        if card_dealt == decision:
+            point_counter += 1
+        else:
+            point_counter -= 1
+        deck_size -= 1
+        if deck_size == 0:
+            exit = True
+        #print(f"CHECK: Player choice is {decision}") #PASSED
+        #print(f"CHECK: Card dealt is {card_dealt}") #PASSED
+        #print(f"CHECK: Number of even cards left: {even_counter}") #PASSED
+        #print()
+    #print(f"CHECK: str({even_counter}) even cards left") #PASSED
+    #print(f"CHECK: str({odd_counter}) odd cards left") #PASSED
+    #print(f"CHECK: You have scored str({point_counter}) points") #PASSED
+    return point_counter
+
+def evaluation():
+    results_list = []
+    for i in range(1,100000): #run the game 100000 times, arbitrary number
+        result = main()
+        results_list.append(result)
+    results_list.sort()
+    dict = {}
+    for i in results_list:
+        if str(i) not in dict:
+            dict[str(i)] = 1
+        else:
+            current_value = dict[str(i)]
+            dict[str(i)] = current_value + 1
+    list_format = list(dict.items())
+    list_format.sort(reverse = True, key = lambda x: x[1])
+    print(list_format) #list of all results from most common to least common \ index 0 is the result, index 1 is the frequency
+
+    #if u want to find expected value
+    sum = 0
+    sample_size = 100000  # arbitrary number that must be the same as the number used in main code
+    for i in list_format:
+        sum += (int(i[0]) * i[1])
+    expected_value = sum / sample_size
+    print(expected_value)
+
+
+evaluation()
+
